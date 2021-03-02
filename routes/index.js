@@ -1,6 +1,6 @@
 import {productos} from './productos'
-import {routeUsuarios} from './usuarios'
+import {routeChat} from './chat'
 module.exports = {
     productos,
-    routeUsuarios
+    routeChat
 }

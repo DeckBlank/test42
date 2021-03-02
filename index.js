@@ -12,11 +12,11 @@ import http  from 'http'
 const server = http.createServer(app)
 const io = socketIO(server)
 app.use(express.json());
-app.use(express.static('./public/'));
+app.use(express.static('./frontendreact/build/'));
 app.use(cors(corsOptions));
 app.get("/productos", function (req, res) {
   let path = "index.html";
-  res.sendFile(path, { root: './public/' });
+  res.sendFile(path, { root: './frontendreact/build/' });
 });
 
 io.on('connect', (client) => {
@@ -41,7 +41,7 @@ io.on('connect', (client) => {
     }
     
   })
-  client.on('chat',(mensaje)=>{
+  client.on('chat',async (mensaje)=>{
     let email = Usuarios.getEmailbyId(client.id)
     console.log('cliente',mensaje,client.id,email)
     if(email===''){
@@ -53,7 +53,8 @@ io.on('connect', (client) => {
         fecha:new Date(),
         mensaje
       }
-      Usuarios.guardar(mensajeChat)
+      let guardado = await Usuarios.guardar(mensajeChat)
+      io.sockets.emit('resp-chat',guardado)
     }
     
   })
@@ -70,7 +71,7 @@ server.listen(PORT, () => {
   console.log(`Aplicacion en puerto ${PORT}`);
 });
 
-import { productos,routeUsuarios } from "./routes";
+import { productos,routeChat } from "./routes";
 
 app.use("/api/productos", productos,(req,res,next)=>{
   let message = req.message;
@@ -79,7 +80,7 @@ app.use("/api/productos", productos,(req,res,next)=>{
 });
 
 
- app.use("/usuarios", routeUsuarios);
+ app.use("/chat", routeChat);
 
 /*
 console.log(

@@ -24,10 +24,10 @@ export class files{
             try {
                 let data = await this.leer();
                 data = data.length?JSON.parse(data):data;
-                producto = [...data,{...producto}];
-                fs.writeFile(this.archivo, JSON.stringify(producto), (err) =>{
+                let total  = [...data,{...producto}];
+                fs.writeFile(this.archivo, JSON.stringify(total), (err) =>{
                     if(err) return reject('Hubo un error')
-                    return resolve('done')
+                    return resolve(total)
                 }); 
             } catch (error) {
                 return reject('el archivo no existe')
