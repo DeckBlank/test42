@@ -20,12 +20,7 @@ app.get("/productos", function (req, res) {
 });
 
 io.on('connect', (client) => {
-  /* client.broadcast.emit('mensaje', 'Desde el server') */
   console.log('cliente',client.id)
-  /* client.on('mensaje del chat', (message) => {
-      console.log(message)
-      io.emit('mensaje del chat', message)
-  }) */
   console.log(Usuarios.nuevaConexion(client.id));
   client.on('disconnect', function () {
     console.log('adios',client.id)
@@ -81,31 +76,3 @@ app.use("/api/productos", productos,(req,res,next)=>{
 
 
  app.use("/chat", routeChat);
-
-/*
-console.log(
-  
-  Usuarios.newUser({
-    id:'algo',
-    email:'aaaa',
-    fecha:'121212',
-    mensaje:'aaaaaa'
-  })
-);
-console.log(
-  
-  Usuarios.newUser({
-    id:'algo',
-    email:'aaaa',
-  })
-);
-
-console.log( 
-  Usuarios.guardar(
-    {
-      email:'aaaa',
-      fecha:'121212',
-      mensaje:'aaaaaa'
-    }
-  )
-); */
