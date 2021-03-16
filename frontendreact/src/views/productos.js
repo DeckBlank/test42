@@ -9,9 +9,7 @@ function Productos(){
     const [productos, setState] = useState([])
     const [error, setHasError] = useState(false)
     socket.on('connect', (message) =>  {
-        console.log(`Sesion: ${socket.id}`);
         socket.on(socket.id, function (info) {
-            console.log(info);
        });
     })
     useEffect(async () => {
@@ -28,18 +26,15 @@ function Productos(){
         respuesta.forEach(element => {
             text = `${text}\n${element.email}-${(new Date(element.fecha)).toLocaleString()}: ${element.mensaje}`
         });
-        console.log(text);
         setTexto(text)
     }) 
     useEffect(async ()=>{
         let respuesta = await query('/chat','get',{})
         //[{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:37.656Z","mensaje":"me conecte"},{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:40.696Z","mensaje":"me conecte"},{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:41.890Z","mensaje":"me conecte"},{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:43.152Z","mensaje":"me conecte"}]
-        console.log(respuesta);
         let text = ''
         respuesta.forEach(element => {
             text = `${text}\n${element.email}-${(new Date(element.fecha)).toLocaleString()}: ${element.mensaje}`
         });
-        console.log(text);
         setTexto(text)
     }, [])
     socket.on('mensaje', (payload) =>{
@@ -56,7 +51,6 @@ function Productos(){
     async function registrar(){
         let correo  =  document.querySelector('#email').value
         let respuesta = await socket.emit('registrarse', correo);
-        console.log(respuesta);
         alert('email aceptado')
         setEmail(correo)
         /* document.querySelector('#mensaje').value = '' */
@@ -65,7 +59,6 @@ function Productos(){
     const [mensaje, setMensaje] = useState('')
     function enviarMensaje(){
         let mensaje  =  document.querySelector('#mensaje').value
-        console.log('enviamos', mensaje);
         socket.emit('chat', mensaje);
     }
        
@@ -98,7 +91,7 @@ function Productos(){
                 <table className="table table-dark table-striped" >
                 <thead>
                     <tr>
-                    <th scope="col">#</th>
+                    <th scope="col">ID</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Precio</th>
                     <th scope="col">Foto</th>
@@ -117,7 +110,7 @@ function Productos(){
                         productos.map((producto,i)=>{
                             return(
                                 <tr >
-                                    <td scope="row">{i+1}</td>
+                                    <td scope="row">{producto.id}</td>
                                     <td>{producto.title}</td>
                                     <td>{producto.price}</td>
                                     <td>

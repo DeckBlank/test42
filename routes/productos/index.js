@@ -2,33 +2,33 @@ import express from 'express'
 import {Productos}  from '../../utils/productos'
 export const productos = express.Router()
 
-productos.get('/',(req,res)=>{
-    res.json(Productos.getItems())
+productos.get('/',async (req,res)=>{
+    res.json(await Productos.getItems())
 })
 
-productos.get('/:id',(req,res)=>{
+productos.get('/:id',async (req,res)=>{
     let id = req.params.id
-    res.json(Productos.getItemsById(id))
+    res.json(await Productos.getItemsById(id))
 })
 
-productos.post('/',(req,res,next)=>{
+productos.post('/',async (req,res,next)=>{
     let body = req.body
-    res.json(Productos.addItem(body))
-    req.message = Productos.getItems();
+    res.json(await Productos.addItem(body))
+    req.message = await Productos.getItems();
     next()
 })
 
-productos.put('/:id',(req,res,next)=>{
+productos.put('/:id',async (req,res,next)=>{
     let body = req.body
-    res.json(Productos.putItemById(body));
-    req.message = Productos.getItems();
+    res.json(await Productos.putItemById(body));
+    req.message = await Productos.getItems();
     next()
 })
 
-productos.delete('/:id',(req,res,next)=>{
+productos.delete('/:id',async (req,res,next)=>{
     let id = req.params.id
-    res.json(Productos.deleteItemById(id));
-    req.message = Productos.getItems();
+    res.json(await Productos.deleteItemById(id));
+    req.message = await Productos.getItems();
     next()
 })
 

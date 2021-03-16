@@ -48,7 +48,7 @@ io.on('connect', (client) => {
         fecha:new Date(),
         mensaje
       }
-      let guardado = await Usuarios.guardar(mensajeChat)
+      let guardado = await Usuarios.guardar(mensajeChat,'sqlite')
       io.sockets.emit('resp-chat',guardado)
     }
     
@@ -70,7 +70,6 @@ import { productos,routeChat } from "./routes";
 
 app.use("/api/productos", productos,(req,res,next)=>{
   let message = req.message;
-  console.log(message)
   io.sockets.emit('mensaje', message);
 });
 

@@ -1,52 +1,119 @@
+import db from '../../config/optionMariaDB'
+const dbType = 'mariadb'
 class productos{
-  constructor(){
+  constructor(type){
       this.productos = []
+      this.dbType =type
   }
-  getItems(){
-      if(!this.productos.length){
-          return this.noItems()
+  async getItems(){
+      
+    //   switch (this.dbType) {
+    //       case 'mariadb':
+              
+    //           break;
+      
+    //       default:
+    //           break;
+    //   }
+    let respuesta = null 
+      switch (this.dbType) {
+          case 'mariadb':
+            respuesta = await db.find()
+              break;
+      
+          default:
+            respuesta = this.productos
+              break;
       }
-      return this.productos
+    if(!respuesta.length){
+        return this.noItems()
+    }
+    return  respuesta
+      
   }
-  getItemsById(id){
+  async getItemsById(id){
       let data  = this.validacionEsquema('get',{id})
       if(!data) return this.error()
       if(!this.productos.length) return this.noItems()
-      let filtered = this.productos.filter((producto) => { return producto.id === data.id; });
-      if(filtered.length===0) return this.itemNotFound()
-      return filtered[0]
+        switch (this.dbType) {
+          case 'mariadb':
+              let respuesta = await db.findById(data.id)
+              return respuesta
+              break;
+      
+          default:
+
+            let filtered = this.productos.filter((producto) => { return producto.id === data.id; });
+            if(filtered.length===0) return this.itemNotFound()
+            return filtered[0]
+            break;
+      }
+      
   }
 
-  addItem(obj){
+  async addItem(obj){
       let data  = this.validacionEsquema('post',obj)
       if(!data) return this.error()
       if(!data) return this.error()
-      let id = this.productos.length;
-      if(id!=0){
-          let maxId = this.productos.reduce(function(prev, current) {
-              return (prev.id > current.id) ? prev : current
-          })
-          id = parseInt(maxId.id) + 1
+      let newProducto = null
+      let id = null
+      switch (this.dbType) {
+          case 'mariadb':
+            id  = await  db.insert(data)
+            newProducto = {...id,...data}
+            console.log('sss',newProducto);
+            break;
+          default:
+            id = this.productos.length;
+            if(id!=0){
+                let maxId = this.productos.reduce(function(prev, current) {
+                    return (prev.id > current.id) ? prev : current
+                })
+                id = parseInt(maxId.id) + 1
+            }
+            newProducto = {...data,id}
+            this.productos = [...this.productos, {...newProducto}]
+            break;
       }
-      let newProducto = {...data,id}
-      this.productos = [...this.productos, {...newProducto}]
-      return newProducto
+      return newProducto 
   }
-  putItemById(obj){
+  async putItemById(obj){
       let data  = this.validacionEsquema('put',obj)
       if(!data) return this.error()
-      let indexEncontrado = this.productos.findIndex((producto) => { return producto.id === data.id; });
-      if(indexEncontrado===-1) return this.itemNotFound()
-      this.productos[indexEncontrado] = {...data}
-      return data
+        switch (this.dbType) {
+          case 'mariadb':
+              let respuesta = await db.update(data.id,data)
+              console.log(respuesta);
+              break;
+          default:
+            let indexEncontrado = this.productos.findIndex((producto) => { return producto.id === data.id; });
+            if(indexEncontrado===-1) return this.itemNotFound()
+            this.productos[indexEncontrado] = {...data}
+            
+            break;
+        }
+    return data
+      
   }
-  deleteItemById(id){
+  async deleteItemById(id){
       let data  = this.validacionEsquema('delete',{id})
       if(!data) return this.error()
-      let indexEncontrado = this.productos.findIndex((producto) => { return producto.id === data.id; });
-      if(indexEncontrado===-1) return this.itemNotFound()
-      this.productos.splice(indexEncontrado,1)
-      return this.productos
+        switch (this.dbType) {
+          case 'mariadb':
+            let respuesta = await db.remove(data.id)
+              console.log(data.id,respuesta);
+              respuesta = await db.find();
+              return respuesta 
+              break;
+      
+          default:
+            let indexEncontrado = this.productos.findIndex((producto) => { return producto.id === data.id; });
+            if(indexEncontrado===-1) return this.itemNotFound()
+            this.productos.splice(indexEncontrado,1)
+            return this.productos
+              break;
+      }
+      
   }
 
   itemNotFound(){
@@ -102,4 +169,4 @@ class productos{
   }
 }
 
-export const Productos = new productos();
+export const Productos = new productos(dbType);

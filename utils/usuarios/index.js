@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
 import {files} from '../files'
-console.log(files);
 class usuarios extends files{ 
     constructor(archivo){
         super(archivo)
@@ -12,15 +11,15 @@ class usuarios extends files{
         return {message: `nueva conexion con ${id}`}
     }
     validarAcceso(id){
-        console.log(this.usuarios);
+
         let indexEncontrado = this.usuarios.findIndex((usuario) => { return usuario.id === id; });
-        console.log(indexEncontrado);
+
         if(indexEncontrado>-1) return indexEncontrado
         return false
     }
     getEmailbyId(id){
         let indexEncontrado = this.usuarios.findIndex((usuario) => { return usuario.id === id; });
-        console.log(indexEncontrado);
+
         if(indexEncontrado>-1) return this.usuarios[indexEncontrado].email
         return ''
     }

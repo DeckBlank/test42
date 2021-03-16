@@ -1,6 +1,7 @@
 'use strict'
 const fs  = require('fs');
-
+import { resolve } from 'path';
+import db from '../../config/optionSQLite'
 export class files{
     constructor(archivo){
         this.archivo = archivo;
@@ -8,28 +9,60 @@ export class files{
             return obj != null && obj.constructor.name === "Object"
         }
     }
-    leer (){
-        return new Promise((resolve,reject)=>{
-            fs.readFile(this.archivo, 'utf8', (err,data)=>{
-                if (err) reject([]);
-                resolve(data);
-              });
+    leer (type){
+        return new Promise(async (resolve,reject)=>{
+            switch (type) {
+                case 'sqlite':
+                    try {
+                        let data = await db.find();
+                        console.log(data);
+                        resolve(data)
+                        break;
+                        
+                    } catch (error) {
+                        console.log('error',error);
+                        reject(error)
+                    }
+            
+                default:
+                
+                        fs.readFile(this.archivo, 'utf8', (err,data)=>{
+                            if (err) reject([]);
+                            resolve(data);
+                        });
+                
+                    break;
+            }
         })
+        
     }
-    guardar(producto){
+    guardar(producto,type){
         return new Promise(async (resolve,reject)=>{
             if(!this.isObject(producto)){
                 return reject('texto no valido')
             }
             try {
-                let data = await this.leer();
-                data = data.length?JSON.parse(data):data;
-                let total  = [...data,{...producto}];
-                fs.writeFile(this.archivo, JSON.stringify(total), (err) =>{
-                    if(err) return reject('Hubo un error')
-                    return resolve(total)
-                }); 
+                let data = null
+                switch (type) {
+                    case 'sqlite':
+                        data = await db.insert(producto)
+                        console.log(data, 'algo');
+                        data = await db.find();
+                        return resolve(data)
+                        break;
+                    default:
+                        data = await this.leer();
+                        data = data.length?JSON.parse(data):data;
+                        let total  = [...data,{...producto}];
+                        fs.writeFile(this.archivo, JSON.stringify(total), (err) =>{
+                            if(err) return reject('Hubo un error')
+                            return resolve(total)
+                        }); 
+                        break;
+                }
+                
             } catch (error) {
+                console.log(error);
                 return reject('el archivo no existe')
             }
         })
