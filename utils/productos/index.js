@@ -1,172 +1,216 @@
 import db from '../../config/optionMariaDB'
-const dbType = 'mariadb'
-class productos{
-  constructor(type){
-      this.productos = []
-      this.dbType =type
-  }
-  async getItems(){
-      
-    //   switch (this.dbType) {
-    //       case 'mariadb':
-              
-    //           break;
-      
-    //       default:
-    //           break;
-    //   }
-    let respuesta = null 
-      switch (this.dbType) {
-          case 'mariadb':
-            respuesta = await db.find()
-              break;
-      
-          default:
-            respuesta = this.productos
-              break;
-      }
-    if(!respuesta.length){
-        return this.noItems()
+import { ProductosCollection } from '../../config/mongo'
+const dbType = process.env.DB_TYPE
+
+// ** lazy load *//
+// switch (this.dbType) {
+//     case 'mariadb':
+
+//         break;
+//     case 'mongodb':
+
+//         break;
+
+//     default:
+
+//         break;
+// }
+
+class productos {
+    constructor(type) {
+        this.productos = []
+        this.dbType = type
     }
-    return  respuesta
-      
-  }
-  async getItemsById(id){
-      let data  = this.validacionEsquema('get',{id})
-      if(!data) return this.error()
-      if(!this.productos.length) return this.noItems()
-        switch (this.dbType) {
-          case 'mariadb':
-              let respuesta = await db.findById(data.id)
-              return respuesta
-              break;
-      
-          default:
+    async getItems() {
 
-            let filtered = this.productos.filter((producto) => { return producto.id === data.id; });
-            if(filtered.length===0) return this.itemNotFound()
-            return filtered[0]
-            break;
-      }
-      
-  }
+        //   switch (this.dbType) {
+        //       case 'mariadb':
 
-  async addItem(obj){
-      let data  = this.validacionEsquema('post',obj)
-      if(!data) return this.error()
-      if(!data) return this.error()
-      let newProducto = null
-      let id = null
-      switch (this.dbType) {
-          case 'mariadb':
-            id  = await  db.insert(data)
-            newProducto = {...id,...data}
-            console.log('sss',newProducto);
-            break;
-          default:
-            id = this.productos.length;
-            if(id!=0){
-                let maxId = this.productos.reduce(function(prev, current) {
-                    return (prev.id > current.id) ? prev : current
-                })
-                id = parseInt(maxId.id) + 1
-            }
-            newProducto = {...data,id}
-            this.productos = [...this.productos, {...newProducto}]
-            break;
-      }
-      return newProducto 
-  }
-  async putItemById(obj){
-      let data  = this.validacionEsquema('put',obj)
-      if(!data) return this.error()
+        //           break;
+
+        //       default:
+        //           break;
+        //   }
+        let respuesta = null
         switch (this.dbType) {
-          case 'mariadb':
-              let respuesta = await db.update(data.id,data)
-              console.log(respuesta);
-              break;
-          default:
-            let indexEncontrado = this.productos.findIndex((producto) => { return producto.id === data.id; });
-            if(indexEncontrado===-1) return this.itemNotFound()
-            this.productos[indexEncontrado] = {...data}
-            
-            break;
+            case 'mariadb':
+                respuesta = await db.find()
+                break;
+            case 'mongodb':
+                respuesta = await ProductosCollection.find()
+                break;
+            default:
+                respuesta = this.productos
+                break;
         }
-    return data
-      
-  }
-  async deleteItemById(id){
-      let data  = this.validacionEsquema('delete',{id})
-      if(!data) return this.error()
+        if (!respuesta.length) {
+            return this.noItems()
+        }
+        return respuesta
+
+    }
+    async getItemsById(id) {
+        let data = this.validacionEsquema('get', { id })
+        if (!data) return this.error()
+        if (!this.productos.length) return this.noItems()
+        let respuesta = null
         switch (this.dbType) {
-          case 'mariadb':
-            let respuesta = await db.remove(data.id)
-              console.log(data.id,respuesta);
-              respuesta = await db.find();
-              return respuesta 
-              break;
-      
-          default:
-            let indexEncontrado = this.productos.findIndex((producto) => { return producto.id === data.id; });
-            if(indexEncontrado===-1) return this.itemNotFound()
-            this.productos.splice(indexEncontrado,1)
-            return this.productos
-              break;
-      }
-      
-  }
+            case 'mariadb':
+                respuesta = await db.findById(data.id)
+                return respuesta
+                break;
+            case 'mongodb':
+                respuesta = await ProductosCollection.findOne({ id })
+                return respuesta
+                break;
+            default:
 
-  itemNotFound(){
-      return {
-          error : 'producto no encontrado'
-      }
-  }
+                let filtered = this.productos.filter((producto) => { return producto.id === data.id; });
+                if (filtered.length === 0) return this.itemNotFound()
+                return filtered[0]
+                break;
+        }
 
-  noItems(){
-      return {
-          'error':'no hay productos cargados'
-      }
-  }
+    }
 
-  isObject(obj){
-      return obj != null && obj.constructor.name === "Object"
-  }
-  error(){
-      return {message:"algo salio mal"}
-  }
+    async addItem(obj) {
+        let data = this.validacionEsquema('post', obj)
+        if (!data) return this.error()
+        if (!data) return this.error()
+        let newProducto = null
+        let id = null
+        switch (this.dbType) {
+            case 'mariadb':
+                id = await db.insert(data)
+                newProducto = { ...id, ...data }
+                console.log('sss', newProducto);
+                break;
+            case 'mongodb':
+                id = await ProductosCollection.create(data)
+                newProducto = { ...id, ...data }
+                console.log('sss', newProducto, id);
+                break;
+            default:
+                id = this.productos.length;
+                if (id != 0) {
+                    let maxId = this.productos.reduce(function (prev, current) {
+                        return (prev.id > current.id) ? prev : current
+                    })
+                    id = parseInt(maxId.id) + 1
+                }
+                newProducto = { ...data, id }
+                this.productos = [...this.productos, { ...newProducto }]
+                break;
+        }
+        return newProducto
+    }
+    async putItemById(obj) {
+        let data = this.validacionEsquema('put', obj)
+        if (!data) return this.error()
+        let respuesta = null
+        switch (this.dbType) {
+            case 'mariadb':
+                respuesta = await db.update(data.id, data)
+                console.log(respuesta);
+                break;
+            case 'mongodb':
+                let busqueda = {_id:data.id}
+                let update  = {$set:data}
+                let options  = { upsert: true }
+                respuesta = await ProductosCollection.updateOne(busqueda,update, options)
+                console.log(respuesta);
+                break;
+            default:
+                let indexEncontrado = this.productos.findIndex((producto) => { return producto.id === data.id; });
+                if (indexEncontrado === -1) return this.itemNotFound()
+                this.productos[indexEncontrado] = { ...data }
 
-  validacionEsquema(metodo,data){
-      let datoValidado = {}
-      let esquema = {
-          id : "number",
-          title : "string",
-          price : "number",
-          tumbnails : "string"
-      }
-      try {
-          datoValidado = {id:parseInt(data['id'])}
-          switch (metodo) {
-              case 'post':
-                  datoValidado = {
-                      title : data['title'].toString(),
-                      price : parseInt(data['price']),
-                      tumbnails : data['tumbnails'].toString()
-                  }
-                  break;
-              case 'put':
-                  datoValidado = { 
-                      ...datoValidado,
-                      title : data['title'].toString(),
-                      price : parseInt(data['price']),
-                      tumbnails : data['tumbnails'].toString()
-                  }
-                  break;
-          }
-          return datoValidado;    
-      } catch (error) {
-          return false;
-      }
-  }
+                break;
+        }
+        return data
+
+    }
+    async deleteItemById(id) {
+        let data = this.validacionEsquema('delete', { id })
+        if (!data) return this.error()
+        let respuesta = null
+        switch (this.dbType) {
+            case 'mariadb':
+                respuesta = await db.remove(data.id)
+                console.log(data.id, respuesta);
+                respuesta = await db.find();
+                return respuesta
+                break;
+            case 'mongodb':
+                respuesta = await ProductosCollection.deleteOne({_id:data.id})
+                respuesta = await ProductosCollection.find();
+                return respuesta
+                break;
+            default:
+                let indexEncontrado = this.productos.findIndex((producto) => { return producto.id === data.id; });
+                if (indexEncontrado === -1) return this.itemNotFound()
+                this.productos.splice(indexEncontrado, 1)
+                return this.productos
+                break;
+        }
+
+    }
+
+    itemNotFound() {
+        return {
+            error: 'producto no encontrado'
+        }
+    }
+
+    noItems() {
+        return {
+            'error': 'no hay productos cargados'
+        }
+    }
+
+    isObject(obj) {
+        return obj != null && obj.constructor.name === "Object"
+    }
+    error() {
+        return { message: "algo salio mal" }
+    }
+
+    validacionEsquema(metodo, data) {
+        let datoValidado = {}
+        let esquema = {
+            id: "number",
+            title: "string",
+            price: "number",
+            tumbnails: "string"
+        }
+        try {
+            if(dbType==='mongodb'){
+                datoValidado = { id: data['id'] }
+            }else{
+                datoValidado = { id: parseInt(data['id']) }
+            }
+            switch (metodo) {
+                case 'post':
+                    datoValidado = {
+                        title: data['title'].toString(),
+                        price: parseInt(data['price']),
+                        tumbnails: data['tumbnails'].toString()
+                    }
+                    break;
+                case 'put':
+                    datoValidado = {
+                        ...datoValidado,
+                        title: data['title'].toString(),
+                        price: parseInt(data['price']),
+                        tumbnails: data['tumbnails'].toString()
+                    }
+                    break;
+            }
+            return datoValidado;
+        } catch (error) {
+            return false;
+        }
+    }
 }
 
 export const Productos = new productos(dbType);

@@ -15,7 +15,7 @@ export class files{
                 case 'sqlite':
                     try {
                         let data = await db.find();
-                        console.log(data);
+                        /* console.log(data); */
                         resolve(data)
                         break;
                         
