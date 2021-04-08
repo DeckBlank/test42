@@ -1,9 +1,15 @@
 import express from 'express'
 import {Productos}  from '../../utils/productos'
+import {getFakeProducts}  from '../../generador/productos'
+
 export const productos = express.Router()
 
 productos.get('/',async (req,res)=>{
     res.json(await Productos.getItems())
+})
+productos.get('/test',async (req,res)=>{
+    let cant = req.query.cant
+    res.json(getFakeProducts(cant))
 })
 
 productos.get('/:id',async (req,res)=>{

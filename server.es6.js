@@ -14,7 +14,7 @@ const io = socketIO(server)
 app.use(express.json());
 app.use(express.static('./frontendreact/build/'));
 app.use(cors(corsOptions));
-app.get("/productos", function (req, res) {
+app.get("/productos/*", function (req, res) {
   let path = "index.html";
   res.sendFile(path, { root: './frontendreact/build/' });
 });
@@ -72,6 +72,7 @@ app.use("/api/productos", productos,(req,res,next)=>{
   let message = req.message;
   io.sockets.emit('mensaje', message);
 });
+
 
 
  app.use("/chat", routeChat);

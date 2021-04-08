@@ -14,6 +14,7 @@ function Main(){
             <Router>
                     <Route exact path="/" component={Home}/>
                     <Route exact path="/productos" component={Productos}/>
+                    <Route exact path="/productos/vista-test" component={Productos}/>
                     {/* <Route  component={PageNotFound}/> */}
             </Router>
         </main>

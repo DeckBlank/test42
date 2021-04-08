@@ -7,6 +7,8 @@ export const query = async (query, method, json) => {
     },
     body: JSON.stringify({ ...json })
   };
+  console.log(process.env);
+  console.log(options,`${process.env.REACT_APP_URL_BACKEND}${query}`);
   switch (method.toLowerCase()) {
     case "get":
       delete options.headers;
@@ -18,7 +20,7 @@ export const query = async (query, method, json) => {
       break;
   }
   try {
-    let resp = await fetch(query, options);
+    let resp = await fetch(`${process.env.REACT_APP_URL_BACKEND}${query}`, options);
     return resp.json();
   } catch (error) {
     console.log(error);

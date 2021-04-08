@@ -1,10 +1,13 @@
 import React,{useEffect,useState,Fragment} from 'react'
 import { query } from '../utils/query'
+import { useLocation } from 'react-router-dom'
 import io from 'socket.io-client';
-const socket = io(process.env.URL,{path:'/socket.io'});
+const socket = io(process.env.REACT_APP_URL_BACKEND,{path:'/socket.io'});
 
 
 function Productos(){
+    const pathName = useLocation().pathname
+    /* console.log(location.pathname); */
     let algo = []
     const [productos, setState] = useState([])
     const [error, setHasError] = useState(false)
@@ -13,7 +16,10 @@ function Productos(){
        });
     })
     useEffect(async () => {
-        let respuesta = await query('/api/productos','get',{})
+        let url = pathName==='/productos/vista-test'?'/api/productos/test?cant=20':'/api/productos'
+        console.log(pathName);
+        
+        let respuesta = await query(url,'get',{})
         if(respuesta.error){
             setHasError(respuesta)
         }else{
@@ -64,7 +70,7 @@ function Productos(){
        
     return(
         <main className="content">
-            <div className="row">
+            {pathName.includes('productos')?'':<div className="row" >
                 <div>
                     <textarea style={{height:"200px"}} className="form-control" value={texto}>
                     </textarea>
@@ -82,7 +88,7 @@ function Productos(){
                                     <button onClick={enviarMensaje}>Enviar</button>
                                 </div>)
                 }
-            </div>
+            </div>}
             <div className="row">
                 {
                error?<div><h1 className="error">{error.error}</h1></div>:(
