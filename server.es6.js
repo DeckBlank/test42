@@ -14,7 +14,7 @@ const io = socketIO(server)
 app.use(express.json());
 app.use(express.static('./frontendreact/build/'));
 app.use(cors(corsOptions));
-app.get("/productos/*", function (req, res) {
+app.get("/*", function (req, res) {
   let path = "index.html";
   res.sendFile(path, { root: './frontendreact/build/' });
 });
@@ -107,15 +107,17 @@ app.use("/api/productos", productos,(req,res,next)=>{
 
 app.post('/login', (req,res) => {
   let { nombre } = req.body
+  console.log(nombre);
   req.session.nombre = nombre
-  res.redirect('/')
+  res.json(nombre)
 })
 
 app.post('/logout', (req,res) => {
   let nombre = getNombreSession(req)
+  console.log(nombre);
   if(nombre) {
       req.session.destroy( err => {
-          if(!err) res.json(nombre )
+          if(!err) res.json(nombre)
           else res.redirect('/')
       })
   }

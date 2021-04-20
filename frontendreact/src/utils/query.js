@@ -7,8 +7,6 @@ export const query = async (query, method, json) => {
     },
     body: JSON.stringify({ ...json })
   };
-  console.log(process.env);
-  console.log(options,`${process.env.REACT_APP_URL_BACKEND}${query}`);
   switch (method.toLowerCase()) {
     case "get":
       delete options.headers;
