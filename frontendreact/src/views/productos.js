@@ -57,15 +57,18 @@ function Productos(){
     async function registrar(){
         let correo  =  document.querySelector('#email').value
         let respuesta = await socket.emit('registrarse', correo);
-        alert('email aceptado')
+        
+        document.querySelector('#email').value = ''
         setEmail(correo)
-        /* document.querySelector('#mensaje').value = '' */
+        alert('email aceptado')
+        
     }
     
     const [mensaje, setMensaje] = useState('')
     function enviarMensaje(){
         let mensaje  =  document.querySelector('#mensaje').value
         socket.emit('chat', mensaje);
+        document.querySelector('#mensaje').value = ''
     }
        
     return(
@@ -77,14 +80,14 @@ function Productos(){
                 </div>
                 {
                     email===''?(<div>
-                                    <input placeholder="Email" id="email"/> {/* <input placeholder="Email"></input> */}
+                                    <input placeholder="Email" id="email"/> 
                                      <button onClick={registrar}>Registrar</button>
                                 </div>):
                                 (<div>
                                     <input  
                                     placeholder="Mensaje" 
                                     id="mensaje"
-                                    /> {/* <input placeholder="Email"></input> */}
+                                    /> 
                                     <button onClick={enviarMensaje}>Enviar</button>
                                 </div>)
                 }

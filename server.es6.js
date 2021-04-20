@@ -76,3 +76,50 @@ app.use("/api/productos", productos,(req,res,next)=>{
 
 
  app.use("/chat", routeChat);
+
+ 
+ import cookieParser from 'cookie-parser'
+ import session from 'express-session'
+
+
+ app.use(cookieParser())
+ app.use(session({
+     secret: 'supersecreta',
+     resave: false,
+     saveUninitialized: false,
+     rolling: true,
+     cookie: {
+         maxAge: 60000
+     }
+ }))
+ 
+ const getNombreSession = req => req.session.nombre? req.session.nombre: ''
+/*  app.get('/login', (req,res) => {
+  if(req.session.nombre) {
+      res.render("home", {
+          nombre: req.session.nombre
+      })
+  }
+  else {
+      res.sendFile(process.cwd() + '/public/login.html')
+  }
+}) */
+
+app.post('/login', (req,res) => {
+  let { nombre } = req.body
+  req.session.nombre = nombre
+  res.redirect('/')
+})
+
+app.post('/logout', (req,res) => {
+  let nombre = getNombreSession(req)
+  if(nombre) {
+      req.session.destroy( err => {
+          if(!err) res.json(nombre )
+          else res.redirect('/')
+      })
+  }
+  else {
+      res.redirect('/')
+  }
+})
