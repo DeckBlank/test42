@@ -19,6 +19,11 @@ export const query = async (query, method, json) => {
   }
   try {
     let resp = await fetch(`${process.env.REACT_APP_URL_BACKEND}${query}`, options);
+    if(resp.status===401){
+      localStorage.removeItem('user')
+      window.location.href='/login'
+    }
+    console.log(resp);
     return resp.json();
   } catch (error) {
     console.log(error);
