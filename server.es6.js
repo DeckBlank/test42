@@ -12,19 +12,34 @@ import http  from 'http'
 const server = http.createServer(app)
 const io = socketIO(server)
 app.use(express.json());
-app.use(express.static('./frontendreact/build/'));
 app.use(cors(corsOptions));
-app.get("/*", function (req, res) {
-  let path = "index.html";
-  res.sendFile(path, { root: './frontendreact/build/' });
-});
+import cookieParser from 'cookie-parser'
+import session from 'express-session'
+import MongoStore from 'connect-mongo'
+
+app.use(cookieParser())
+app.use(session({
+    secret: 'supersecreta',
+    resave: false,
+    saveUninitialized: false,
+    rolling: true,
+    cookie: {
+        maxAge: 60000
+    },
+    store:MongoStore.create({ mongoUrl: process.env.DB_BDG })
+}))
+
+const sessionMiddleware = (req,res,next)=>{
+  if(req.session.nombre){
+    next();
+  }else{
+    res.sendStatus(401)
+  }
+ }
 
 io.on('connect', (client) => {
-  console.log('cliente',client.id)
-  console.log(Usuarios.nuevaConexion(client.id));
   client.on('disconnect', function () {
-    console.log('adios',client.id)
-    console.log(Usuarios.deleteUser(client.id));
+    console.log(45,Usuarios.deleteUser(client.id));
   });
   client.on('registrarse',(email)=>{
     let estado = Usuarios.newUser(email,client.id)
@@ -56,10 +71,6 @@ io.on('connect', (client) => {
 })
 
 
-
-
-
-
 const PORT = process.env.PORT || 8080;
 
 server.listen(PORT, () => {
@@ -68,60 +79,28 @@ server.listen(PORT, () => {
 
 import { productos,routeChat } from "./routes";
 
-app.use("/api/productos", productos,(req,res,next)=>{
+app.use("/api/productos", sessionMiddleware, productos,(req,res,next)=>{
   let message = req.message;
   io.sockets.emit('mensaje', message);
 });
 
-
-
- app.use("/chat", routeChat);
-
- 
- import cookieParser from 'cookie-parser'
- import session from 'express-session'
-
-
- app.use(cookieParser())
- app.use(session({
-     secret: 'supersecreta',
-     resave: false,
-     saveUninitialized: false,
-     rolling: true,
-     cookie: {
-         maxAge: 60000
-     }
- }))
- 
- const getNombreSession = req => req.session.nombre? req.session.nombre: ''
-/*  app.get('/login', (req,res) => {
-  if(req.session.nombre) {
-      res.render("home", {
-          nombre: req.session.nombre
-      })
-  }
-  else {
-      res.sendFile(process.cwd() + '/public/login.html')
-  }
-}) */
+ app.use("/chat", sessionMiddleware,routeChat);
 
 app.post('/login', (req,res) => {
   let { nombre } = req.body
-  console.log(nombre);
   req.session.nombre = nombre
   res.json(nombre)
 })
 
 app.post('/logout', (req,res) => {
-  let nombre = getNombreSession(req)
-  console.log(nombre);
-  if(nombre) {
-      req.session.destroy( err => {
-          if(!err) res.json(nombre)
-          else res.redirect('/')
-      })
-  }
-  else {
-      res.redirect('/')
-  }
+  console.log('salio',req.session.nombre)
+  let nombre  = req.session.nombre;
+  req.session.destroy( );
+  res.json(nombre)
 })
+
+app.use(express.static('./frontendreact/build/'));
+app.get("/*", function (req, res) {
+  let path = "index.html";
+  res.sendFile(path, { root: './frontendreact/build/' });
+});
