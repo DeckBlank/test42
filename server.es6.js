@@ -24,7 +24,7 @@ app.use(session({
     saveUninitialized: false,
     rolling: true,
     cookie: {
-        maxAge: 60000
+        maxAge: 600000
     },
     store:MongoStore.create({ mongoUrl: process.env.DB_BDG })
 }))
