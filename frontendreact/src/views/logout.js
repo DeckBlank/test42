@@ -6,11 +6,9 @@ function Login (){
     const baseURL = process.env.REACT_APP_URL_BACKEND
     const [nombre, setNombre] = useState('')
     useEffect(async () => {
-
         let respuesta = await query('/logout','post',{})
-        console.log(respuesta);
         window.localStorage.removeItem('user')
-        setNombre(respuesta)
+        setNombre(await respuesta.json())
       }, []) // este efecto se ejecuta sólo al montarse el componente 
 
     return (

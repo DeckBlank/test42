@@ -20,6 +20,7 @@ function Productos(){
         console.log(pathName);
         
         let respuesta = await query(url,'get',{})
+        respuesta = await respuesta.json();
         if(respuesta.error){
             setHasError(respuesta)
         }else{
@@ -37,6 +38,11 @@ function Productos(){
     useEffect(async ()=>{
         let respuesta = await query('/chat','get',{})
         //[{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:37.656Z","mensaje":"me conecte"},{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:40.696Z","mensaje":"me conecte"},{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:41.890Z","mensaje":"me conecte"},{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:43.152Z","mensaje":"me conecte"}]
+        if(respuesta.status!=200){
+            localStorage.removeItem('user')
+            window.location.href='/login'
+        }
+        respuesta = await respuesta.json();
         let text = ''
         respuesta.forEach(element => {
             text = `${text}\n${element.email}-${(new Date(element.fecha)).toLocaleString()}: ${element.mensaje}`
