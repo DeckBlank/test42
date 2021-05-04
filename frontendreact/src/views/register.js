@@ -10,7 +10,7 @@ function Register (){
         event.preventDefault()
         let nombre = event.target.elements['nombre'].value;
         let password = event.target.elements['password'].value;
-        let respuesta = await query('/register','post',{nombre,password})
+        let respuesta = await query('/auth/register','post',{nombre,password})
         if(respuesta.status!=200){
             localStorage.removeItem('user')
             window.location.href='/error/registro'

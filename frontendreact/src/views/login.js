@@ -1,17 +1,16 @@
-import React , { useEffect }  from 'react'
+import React , { useEffect,useState }  from 'react'
 import {  Link} from 'react-router-dom'
 import { query } from '../utils/query'
 
 function Login (){
     const baseURL = process.env.REACT_APP_URL_BACKEND
-    
+
     useEffect( () => {
-       console.log('login');
        document.querySelector('#myForm').addEventListener('submit', async  (event)=> {
         event.preventDefault()
         let nombre = event.target.elements['nombre'].value;
         let password = event.target.elements['password'].value;
-        let respuesta = await query('/login','post',{nombre,password})
+        let respuesta = await query('/auth/login','post',{nombre,password})
         if(respuesta.status!=200){
             localStorage.removeItem('user')
             window.location.href='/error/inicio'
@@ -43,6 +42,9 @@ function Login (){
 
                 <button className="btn btn-success mt-3">Enviar</button>
             </form>
+            <div className="content row col-xs-12">
+                <a href={`${baseURL}/auth/facebook`} className="btn btn-success mt-3">Iniciar Session con Facebook</a>
+            </div>
         </div>
     )
 }

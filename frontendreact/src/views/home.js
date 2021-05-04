@@ -1,9 +1,10 @@
-import React , { useEffect }  from 'react'
+import React , { useEffect,useState }  from 'react'
 import {  Link} from 'react-router-dom'
 import Input from '../components/form/input'
 import Productos from './productos'
-
+import { query } from '../utils/query'
 function Home (){
+    const baseURL = process.env.REACT_APP_URL_BACKEND
     useEffect( () => {
         import('../utils/dom').then(({myForm})=>{
         })
