@@ -100,7 +100,10 @@ server.listen(PORT, () => {
   console.log(`Aplicacion en puerto ${PORT}`);
 });
 
-import { productos,routeChat } from "./routes";
+import { productos,routeChat ,info,random} from "./routes";
+
+app.use("/info", info);
+app.use("/random", random);
 
 app.use("/api/productos", sessionMiddleware, productos,(req,res,next)=>{
   let message = req.message;

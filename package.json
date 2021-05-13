@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.es6.js --exec babel-node",
+    "prod": "babel-node server.es6.js",
     "start": "node server.js",
     "ServerES6toJS5": "babel server.es6.js -o server.js",
     "ServerTStoJS5": "tsc server.ts "
