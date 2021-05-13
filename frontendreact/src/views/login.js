@@ -19,14 +19,14 @@ function Login (){
         window.localStorage.setItem('user',respuesta)
         window.location.href = "/";
       });
-      }, []) // este efecto se ejecuta sólo al montarse el componente 
+      }, []) 
 
     return (
         <div className="jumbotron">
             <h3>Login de Usuario</h3>
             <br/>
 
-            <form id="myForm" autoComplete="off"> {/* action={`${baseURL}/login`} method="post" */}
+            <form id="myForm" autoComplete="off">
                 <div className="form-group">
                     <label htmlFor="nombre">Ingrese su nombre</label>
                     <input id="nombre" className="form-control" type="text" name="nombre" required/>

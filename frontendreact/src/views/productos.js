@@ -7,7 +7,6 @@ const socket = io(process.env.REACT_APP_URL_BACKEND,{path:'/socket.io'});
 
 function Productos(){
     const pathName = useLocation().pathname
-    /* console.log(location.pathname); */
     let algo = []
     const [productos, setState] = useState([])
     const [error, setHasError] = useState(false)
@@ -17,8 +16,6 @@ function Productos(){
     })
     useEffect(async () => {
         let url = pathName==='/productos/vista-test'?'/api/productos/test?cant=20':'/api/productos'
-        console.log(pathName);
-        
         let respuesta = await query(url,'get',{})
         respuesta = await respuesta.json();
         if(respuesta.error){
@@ -37,7 +34,6 @@ function Productos(){
     }) 
     useEffect(async ()=>{
         let respuesta = await query('/chat','get',{})
-        //[{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:37.656Z","mensaje":"me conecte"},{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:40.696Z","mensaje":"me conecte"},{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:41.890Z","mensaje":"me conecte"},{"email":"deckblank@gmail.com","fecha":"2021-03-02T04:47:43.152Z","mensaje":"me conecte"}]
         if(respuesta.status!=200){
             localStorage.removeItem('user')
             window.location.href='/login'
@@ -63,7 +59,6 @@ function Productos(){
     async function registrar(){
         let correo  =  document.querySelector('#email').value
         let respuesta = await socket.emit('registrarse', correo);
-        
         document.querySelector('#email').value = ''
         setEmail(correo)
         alert('email aceptado')
@@ -113,14 +108,6 @@ function Productos(){
                     </tr>
                 </thead>
                 <tbody>
-                    {/* <tr >
-                    <th scope="row">1</th>
-                    <td>title</td>
-                    <td>price</td>
-                    <td>
-                        <img className="image" src="producto.tumbnails" alt="producto.title"/>
-                    </td>
-                    </tr> */}
                     {
                         productos.map((producto,i)=>{
                             return(

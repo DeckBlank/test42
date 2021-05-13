@@ -100,10 +100,10 @@ server.listen(PORT, () => {
   console.log(`Aplicacion en puerto ${PORT}`);
 });
 
-import { productos,routeChat ,info,random} from "./routes";
+import { productos,routeChat ,info,randoms} from "./routes";
 
 app.use("/info", info);
-app.use("/random", random);
+app.use("/randoms", randoms);
 
 app.use("/api/productos", sessionMiddleware, productos,(req,res,next)=>{
   let message = req.message;
@@ -114,10 +114,10 @@ app.use("/chat",
  sessionMiddleware,
  routeChat);
 
-app.post('/logout', (req,res) => {
-  const { nombre } = req.user;
-  req.logout();
-  res.json(nombre)
+app.post('/logout',sessionMiddleware, (req,res) => {
+    const { nombre } = req.user;
+    req.logout();
+    res.json(nombre);
 })
 
 app.use(express.static('./frontendreact/build/'));

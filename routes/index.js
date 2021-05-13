@@ -1,10 +1,10 @@
 import {productos} from './productos'
 import {routeChat} from './chat'
 import {info} from './info'
-import {random} from './random'
+import {randoms} from './randoms'
 module.exports = {
     productos,
     routeChat,
     info,
-    random
+    randoms
 }

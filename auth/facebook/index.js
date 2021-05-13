@@ -7,23 +7,22 @@ import { User } from "../../models/user.js";
 
 
 route.get("/", (req,res,next)=>{
-    console.log('entro faceboook ');
     next();
     },passport.authenticate("facebook"));
     
 route.get("/callback",
-    passport.authenticate("facebook"), //, { failureRedirect: "/login" }
+    passport.authenticate("facebook"), 
     function (req, res) {
+      console.log(req);
         console.log(req.user);
-        console.log('entro perro');
-        // Successful authentication, redirect home.
-        res.redirect("/");
+        res.redirect('/');
+
     }
 );
 
 export const credenciales = {
-    clientID: process.env.clientID,
-    clientSecret: process.env.clientSecret,
+    clientID: process.env.clientID  || process.argv[3],
+    clientSecret: process.env.clientSecret || process.argv[4],
     callbackURL: process.env.callbackURL,
 }
 
@@ -39,6 +38,7 @@ passport.serializeUser((user, done) => {
   });
 export const callback = function (accessToken, refreshToken, profile, cb) {
     const findOrCreateUser = function () {
+      console.log(41,profile,cb);
       User.findOne({ facebookId: profile.id }, function (err, user) {
         if (err) {
           console.log("Error in SignUp: " + err);

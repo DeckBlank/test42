@@ -4,30 +4,19 @@ export const route = express.Router()
 import { User } from "../../models/user.js";
 import bCrypt from "bcrypt";
 
-
-/* route.get("/", (req,res,next)=>{
-    console.log('entro faceboook ');
-    next();
-    },passport.authenticate("facebook"));
-    
-route.get("/callback",
-    passport.authenticate("facebook", { failureRedirect: "/login" }),
-    function (req, res) {
-        console.log(req.user);
-        console.log('entro perro');
-        // Successful authentication, redirect home.
-        res.redirect("/");
-    }
-);
- */
 route.post(
-    "/login",passport.authenticate("login"), //, { failureRedirect: "/login" }
+    "/login",passport.authenticate("login"), 
     (req, res) => {
       console.log(req.user.nombre);
       res.json(req.user.nombre);
     }
   );
-  route.post("/register",passport.authenticate("register"), // , { failureRedirect: "/failregister" }
+  route.post("/register", 
+  (req, res,next) => {
+    console.log(32,req.body);
+    next();
+  },
+  passport.authenticate("register"), 
     (req, res) => {
       console.log(req.user.nombre);
       res.json(req.user.nombre);
