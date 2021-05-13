@@ -94,7 +94,7 @@ io.on('connect', (client) => {
 })
 
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || process.argv[2];
 
 server.listen(PORT, () => {
   console.log(`Aplicacion en puerto ${PORT}`);
