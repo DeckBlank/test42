@@ -1,4 +1,5 @@
 import knex  from 'knex'
+import {logger} from '../config/logger'
 
 const optionSQLite = {
   client: 'sqlite3',
@@ -19,10 +20,10 @@ SQLite.schema.createTable('mensajes',tbl=>{
     tbl.date('fecha',128).notNullable();
 })
 .then(()=>{
-  console.log('Tabla creada ');
+  logger.info('Tabla creada ');
 })
 .catch((err)=>{
-  console.log('TABLA YA CREADA');
+  logger.info('TABLA YA CREADA');
 
 })
 .finally(()=>{

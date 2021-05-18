@@ -2,19 +2,6 @@ import db from '../../config/optionMariaDB'
 import { ProductosCollection } from '../../config/mongo'
 const dbType = process.env.DB_TYPE
 
-// ** lazy load *//
-// switch (this.dbType) {
-//     case 'mariadb':
-
-//         break;
-//     case 'mongodb':
-
-//         break;
-
-//     default:
-
-//         break;
-// }
 
 class productos {
     constructor(type) {
@@ -23,14 +10,6 @@ class productos {
     }
     async getItems() {
 
-        //   switch (this.dbType) {
-        //       case 'mariadb':
-
-        //           break;
-
-        //       default:
-        //           break;
-        //   }
         let respuesta = null
         switch (this.dbType) {
             case 'mariadb':
@@ -83,12 +62,10 @@ class productos {
             case 'mariadb':
                 id = await db.insert(data)
                 newProducto = { ...id, ...data }
-                console.log('sss', newProducto);
                 break;
             case 'mongodb':
                 id = await ProductosCollection.create(data)
                 newProducto = { ...id, ...data }
-                console.log('sss', newProducto, id);
                 break;
             default:
                 id = this.productos.length;
@@ -111,14 +88,12 @@ class productos {
         switch (this.dbType) {
             case 'mariadb':
                 respuesta = await db.update(data.id, data)
-                console.log(respuesta);
                 break;
             case 'mongodb':
                 let busqueda = {_id:data.id}
                 let update  = {$set:data}
                 let options  = { upsert: true }
                 respuesta = await ProductosCollection.updateOne(busqueda,update, options)
-                console.log(respuesta);
                 break;
             default:
                 let indexEncontrado = this.productos.findIndex((producto) => { return producto.id === data.id; });
@@ -137,7 +112,6 @@ class productos {
         switch (this.dbType) {
             case 'mariadb':
                 respuesta = await db.remove(data.id)
-                console.log(data.id, respuesta);
                 respuesta = await db.find();
                 return respuesta
                 break;

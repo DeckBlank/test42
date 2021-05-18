@@ -15,9 +15,25 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as FacebookStrategy } from "passport-facebook";
 import {facebook,local} from './auth'
+import http  from 'http'
+import compression from 'compression'
+
+import {logger} from './config/logger'
 
 const app = express();
-import http  from 'http'
+
+app.use(compression({ filter: shouldCompress }))
+ 
+function shouldCompress (req, res) {
+  // compresion para todas las rutas menos para /info
+  // comparar con su verion comprimida /info/compression
+  if (req._parsedOriginalUrl.path==='/info') {
+    return false
+  }
+  return compression.filter(req, res)
+}
+
+
 const server = http.createServer(app)
 const io = socketIO(server)
 app.use(express.json());
@@ -47,8 +63,6 @@ app.use("/auth",local.route);
 
 
 const sessionMiddleware = (req,res,next)=>{
-  console.log(req.user);
-  console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
     next();
   } else {
@@ -56,18 +70,15 @@ const sessionMiddleware = (req,res,next)=>{
   }
 }
 app.get('/user',sessionMiddleware,(req,res)=>{
-  console.log(req.user);
   res.json(req.user)
 })
 
 
 io.on('connect', (client) => {
   client.on('disconnect', function () {
-    console.log(Usuarios.deleteUser(client.id));
   });
   client.on('registrarse',(email)=>{
     let estado = Usuarios.newUser(email,client.id)
-    console.log(estado,client.id);
     if(estado ===true){
       io.sockets.emit(client.id,{message:'email aceptado'})
     }else{
@@ -78,7 +89,6 @@ io.on('connect', (client) => {
   client.on('chat',async (mensaje)=>{
     let email = Usuarios.getEmailbyId(client.id)
     if(email===''){
-      console.log({message:'usuario no registrado'});
       io.sockets.emit('error',{message:'usuario no registrado'})
     }else{
       let mensajeChat = {
@@ -97,13 +107,14 @@ io.on('connect', (client) => {
 const PORT = process.env.PORT || process.argv[2];
 
 server.listen(PORT, () => {
-  console.log(`Aplicacion en puerto ${PORT}`);
+  logger.info(`Aplicacion en puerto ${PORT}`);
 });
 
 import { productos,routeChat ,info,randoms} from "./routes";
 
 app.use("/info", info);
 app.use("/randoms", randoms);
+
 
 app.use("/api/productos", sessionMiddleware, productos,(req,res,next)=>{
   let message = req.message;

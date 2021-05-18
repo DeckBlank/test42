@@ -15,12 +15,10 @@ export class files{
                 case 'sqlite':
                     try {
                         let data = await db.find();
-                        /* console.log(data); */
                         resolve(data)
                         break;
                         
                     } catch (error) {
-                        console.log('error',error);
                         reject(error)
                     }
             
@@ -46,7 +44,6 @@ export class files{
                 switch (type) {
                     case 'sqlite':
                         data = await db.insert(producto)
-                        console.log(data, 'algo');
                         data = await db.find();
                         return resolve(data)
                         break;
@@ -62,7 +59,6 @@ export class files{
                 }
                 
             } catch (error) {
-                console.log(error);
                 return reject('el archivo no existe')
             }
         })

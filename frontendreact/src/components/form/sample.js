@@ -4,7 +4,6 @@ function ShowWindowWidth() {
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
-      console.log('algo');
     // creamos una función para actualizar el estado con el clientWidth
     const updateWidth = () => {
       const width = document.body.clientWidth

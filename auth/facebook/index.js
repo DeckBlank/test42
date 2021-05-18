@@ -13,8 +13,6 @@ route.get("/", (req,res,next)=>{
 route.get("/callback",
     passport.authenticate("facebook"), 
     function (req, res) {
-      console.log(req);
-        console.log(req.user);
         res.redirect('/');
 
     }
@@ -38,7 +36,6 @@ passport.serializeUser((user, done) => {
   });
 export const callback = function (accessToken, refreshToken, profile, cb) {
     const findOrCreateUser = function () {
-      console.log(41,profile,cb);
       User.findOne({ facebookId: profile.id }, function (err, user) {
         if (err) {
           console.log("Error in SignUp: " + err);

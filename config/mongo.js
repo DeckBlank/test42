@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-
+import {logger} from '../config/logger'
 
 
 export const ecommerce = mongoose.createConnection(process.env.DB_BDG,{
@@ -8,8 +8,8 @@ export const ecommerce = mongoose.createConnection(process.env.DB_BDG,{
 })
 
 /* let connection = ecommerce.connection */
-ecommerce.on('open',()=>console.log('ecommerce conected'))
-ecommerce.on('error',(error)=>console.log(`An error: ${error}`))
+ecommerce.on('open',()=>logger.info('ecommerce conected'))
+ecommerce.on('error',(error)=>logger.error(`An error: ${error}`))
 
 
 const ObjectId = mongoose.Types.ObjectId
