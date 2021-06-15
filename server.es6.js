@@ -15,6 +15,8 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as FacebookStrategy } from "passport-facebook";
 import {facebook,local} from './auth'
+import { graphqlHTTP } from "express-graphql";
+import { schema,rootValue } from "./graphql";
 
 const app = express();
 import http  from 'http'
@@ -119,6 +121,13 @@ app.post('/logout',sessionMiddleware, (req,res) => {
     req.logout();
     res.json(nombre);
 })
+
+app.use('/core',graphqlHTTP({
+  schema:schema,
+  rootValue:rootValue,
+  graphiql:true
+}))
+
 
 app.use(express.static('./frontendreact/build/'));
 app.get("/*", function (req, res) {

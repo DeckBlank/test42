@@ -2,35 +2,26 @@ import db from '../../config/optionMariaDB'
 import { ProductosCollection } from '../../config/mongo'
 const dbType = process.env.DB_TYPE
 
-// ** lazy load *//
-// switch (this.dbType) {
-//     case 'mariadb':
-
-//         break;
-//     case 'mongodb':
-
-//         break;
-
-//     default:
-
-//         break;
-// }
-
 class productos {
     constructor(type) {
         this.productos = []
         this.dbType = type
     }
+    async getLastId() {
+        let respuesta = null
+        switch (this.dbType) {
+            case 'mariadb':
+                break;
+            case 'mongodb':
+                respuesta = await ProductosCollection.find({},{id:1},{ sort: { id: -1 } ,limit:1 })
+                break;
+            default:
+                respuesta = this.productos
+                break;
+        }
+        return respuesta
+    }
     async getItems() {
-
-        //   switch (this.dbType) {
-        //       case 'mariadb':
-
-        //           break;
-
-        //       default:
-        //           break;
-        //   }
         let respuesta = null
         switch (this.dbType) {
             case 'mariadb':
@@ -52,7 +43,6 @@ class productos {
     async getItemsById(id) {
         let data = this.validacionEsquema('get', { id })
         if (!data) return this.error()
-        if (!this.productos.length) return this.noItems()
         let respuesta = null
         switch (this.dbType) {
             case 'mariadb':
@@ -60,11 +50,11 @@ class productos {
                 return respuesta
                 break;
             case 'mongodb':
-                respuesta = await ProductosCollection.findOne({ id })
+                respuesta = await ProductosCollection.findOne(data)
                 return respuesta
                 break;
             default:
-
+                if (!this.productos.length) return this.noItems()
                 let filtered = this.productos.filter((producto) => { return producto.id === data.id; });
                 if (filtered.length === 0) return this.itemNotFound()
                 return filtered[0]
@@ -76,19 +66,18 @@ class productos {
     async addItem(obj) {
         let data = this.validacionEsquema('post', obj)
         if (!data) return this.error()
-        if (!data) return this.error()
         let newProducto = null
         let id = null
         switch (this.dbType) {
             case 'mariadb':
                 id = await db.insert(data)
                 newProducto = { ...id, ...data }
-                console.log('sss', newProducto);
                 break;
             case 'mongodb':
-                id = await ProductosCollection.create(data)
-                newProducto = { ...id, ...data }
-                console.log('sss', newProducto, id);
+                let cant = await this.getLastId();
+                data = {...data,id:cant[0].id+1}
+                id = await ProductosCollection.create(data);
+                newProducto = { id:id._id, ...data }
                 break;
             default:
                 id = this.productos.length;
@@ -111,14 +100,12 @@ class productos {
         switch (this.dbType) {
             case 'mariadb':
                 respuesta = await db.update(data.id, data)
-                console.log(respuesta);
                 break;
             case 'mongodb':
-                let busqueda = {_id:data.id}
+                let busqueda = {id:data.id}
                 let update  = {$set:data}
                 let options  = { upsert: true }
                 respuesta = await ProductosCollection.updateOne(busqueda,update, options)
-                console.log(respuesta);
                 break;
             default:
                 let indexEncontrado = this.productos.findIndex((producto) => { return producto.id === data.id; });
@@ -137,12 +124,11 @@ class productos {
         switch (this.dbType) {
             case 'mariadb':
                 respuesta = await db.remove(data.id)
-                console.log(data.id, respuesta);
                 respuesta = await db.find();
                 return respuesta
                 break;
             case 'mongodb':
-                respuesta = await ProductosCollection.deleteOne({_id:data.id})
+                respuesta = await ProductosCollection.deleteOne({id:data.id})
                 respuesta = await ProductosCollection.find();
                 return respuesta
                 break;
