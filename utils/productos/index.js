@@ -2,10 +2,6 @@ import db from '../../config/optionMariaDB'
 import { ProductosCollection } from '../../config/mongo'
 const dbType = process.env.DB_TYPE
 
-<<<<<<< HEAD
-
-=======
->>>>>>> test29
 class productos {
     constructor(type) {
         this.productos = []
@@ -26,10 +22,6 @@ class productos {
         return respuesta
     }
     async getItems() {
-<<<<<<< HEAD
-
-=======
->>>>>>> test29
         let respuesta = null
         switch (this.dbType) {
             case 'mariadb':
@@ -81,16 +73,11 @@ class productos {
                 newProducto = { ...id, ...data }
                 break;
             case 'mongodb':
-<<<<<<< HEAD
-                id = await ProductosCollection.create(data)
-                newProducto = { ...id, ...data }
-=======
                 let cant = await this.getLastId();
                 cant = cant.length?(cant[0].id+1):1
                 data = {...data,id:cant}
                 id = await ProductosCollection.create(data);
                 newProducto = { id:id._id, ...data }
->>>>>>> test29
                 break;
             default:
                 id = this.productos.length;
