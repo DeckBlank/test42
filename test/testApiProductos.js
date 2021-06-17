@@ -3,12 +3,13 @@ const chai = require('chai');
 const expect = chai.expect;
 
 describe('axios',()=>{
+    let URL = 'http://localhost:8080/api/productos'
     let idCreated = null;
     ///Leemos los productos que ya existen en la db
     it('getProductos',async ()=>{
         let respuesta = await request({
             method: 'get',
-            url: 'http://localhost:8080/api/productos',
+            url: URL,
             headers: {},
             data : ''
         })
@@ -20,7 +21,7 @@ describe('axios',()=>{
     it('addProducto',async ()=>{
         let respuesta = await request({
             method: 'post',
-            url: 'http://localhost:8080/api/productos',
+            url: URL,
             headers: { 
               'Content-Type': 'application/json'
             },
@@ -39,7 +40,7 @@ describe('axios',()=>{
     it('getProductoById',async ()=>{
         let respuesta = await request({
             method: 'get',
-            url: `http://localhost:8080/api/productos/${idCreated}`,
+            url: `${URL}/${idCreated}`,
             headers: {},
             data : ''
         })
@@ -51,7 +52,7 @@ describe('axios',()=>{
     it('updateProductoById',async ()=>{
         let respuesta = await request({
             method: 'put',
-            url: `http://localhost:8080/api/productos/${idCreated}`,
+            url: `${URL}/${idCreated}`,
             headers: { 
               'Content-Type': 'application/json'
             },
@@ -70,7 +71,7 @@ describe('axios',()=>{
     it('deleteById',async ()=>{
         let respuesta = await request({
             method: 'delete',
-            url: `http://localhost:8080/api/productos/${idCreated}`,
+            url: `${URL}/${idCreated}`,
             headers: {},
             data : ''
         })
