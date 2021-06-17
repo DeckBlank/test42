@@ -7,18 +7,17 @@ type Query{
     getListaProductos:[listaProductos]
     getProductosById(id:Int!):listaProductos
 }
+type Mutation{
+    addProducto(data:inputNewProducto!):listaProductos
+    updateProducto(data:updateDataProducto!):listaProductos
+    deleteProducto(id:Int!):String
+}
 type listaProductos {
     title: String
     price : Int
     id : Int
     tumbnails : String
 }
-type Mutation{
-    addProducto(data:inputNewProducto!):listaProductos
-    updateProducto(data:updateDataProducto!):listaProductos
-    deleteProducto(id:Int!):String
-}
-
 input inputNewProducto {
     title: String
     price : Int

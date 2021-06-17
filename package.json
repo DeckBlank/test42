@@ -5,14 +5,17 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.es6.js --exec babel-node",
+    "testAxios": "nodemon resourcesTest/axiosRequest.js --exec babel-node",
     "prod": "babel-node server.es6.js",
     "start": "node server.js",
     "ServerES6toJS5": "babel server.es6.js -o server.js",
     "ServerTStoJS5": "tsc server.ts "
+
   },
   "author": "JLGS",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "connect-mongo": "^4.4.1",
@@ -39,6 +42,9 @@
     "@babel/cli": "^7.12.13",
     "@babel/core": "^7.12.13",
     "@babel/node": "^7.12.13",
-    "@babel/preset-env": "^7.12.13"
+    "@babel/preset-env": "^7.12.13",
+    "chai": "^4.3.4",
+    "mocha": "^9.0.0",
+    "supertest": "^6.1.3"
   }
 }

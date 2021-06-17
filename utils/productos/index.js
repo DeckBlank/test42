@@ -62,7 +62,6 @@ class productos {
         }
 
     }
-
     async addItem(obj) {
         let data = this.validacionEsquema('post', obj)
         if (!data) return this.error()
@@ -75,7 +74,8 @@ class productos {
                 break;
             case 'mongodb':
                 let cant = await this.getLastId();
-                data = {...data,id:cant[0].id+1}
+                cant = cant.length?(cant[0].id+1):1
+                data = {...data,id:cant}
                 id = await ProductosCollection.create(data);
                 newProducto = { id:id._id, ...data }
                 break;
@@ -141,26 +141,22 @@ class productos {
         }
 
     }
-
     itemNotFound() {
         return {
             error: 'producto no encontrado'
         }
     }
-
     noItems() {
         return {
             'error': 'no hay productos cargados'
         }
     }
-
     isObject(obj) {
         return obj != null && obj.constructor.name === "Object"
     }
     error() {
         return { message: "algo salio mal" }
     }
-
     validacionEsquema(metodo, data) {
         let datoValidado = {}
         let esquema = {
