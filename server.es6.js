@@ -15,10 +15,15 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as FacebookStrategy } from "passport-facebook";
 import {facebook,local} from './auth'
+<<<<<<< HEAD
 import http  from 'http'
 import compression from 'compression'
 
 import {logger} from './config/logger'
+=======
+import { graphqlHTTP } from "express-graphql";
+import { schema,rootValue } from "./graphql";
+>>>>>>> test29
 
 const app = express();
 
@@ -115,8 +120,12 @@ import { productos,routeChat ,info,randoms} from "./routes";
 app.use("/info", info);
 app.use("/randoms", randoms);
 
+<<<<<<< HEAD
 
 app.use("/api/productos", sessionMiddleware, productos,(req,res,next)=>{
+=======
+app.use("/api/productos", productos,(req,res,next)=>{ //, sessionMiddleware
+>>>>>>> test29
   let message = req.message;
   io.sockets.emit('mensaje', message);
 });
@@ -130,6 +139,13 @@ app.post('/logout',sessionMiddleware, (req,res) => {
     req.logout();
     res.json(nombre);
 })
+
+app.use('/core',graphqlHTTP({
+  schema:schema,
+  rootValue:rootValue,
+  graphiql:true
+}))
+
 
 app.use(express.static('./frontendreact/build/'));
 app.get("/*", function (req, res) {

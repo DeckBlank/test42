@@ -2,14 +2,34 @@ import db from '../../config/optionMariaDB'
 import { ProductosCollection } from '../../config/mongo'
 const dbType = process.env.DB_TYPE
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> test29
 class productos {
     constructor(type) {
         this.productos = []
         this.dbType = type
     }
+    async getLastId() {
+        let respuesta = null
+        switch (this.dbType) {
+            case 'mariadb':
+                break;
+            case 'mongodb':
+                respuesta = await ProductosCollection.find({},{id:1},{ sort: { id: -1 } ,limit:1 })
+                break;
+            default:
+                respuesta = this.productos
+                break;
+        }
+        return respuesta
+    }
     async getItems() {
+<<<<<<< HEAD
 
+=======
+>>>>>>> test29
         let respuesta = null
         switch (this.dbType) {
             case 'mariadb':
@@ -31,7 +51,6 @@ class productos {
     async getItemsById(id) {
         let data = this.validacionEsquema('get', { id })
         if (!data) return this.error()
-        if (!this.productos.length) return this.noItems()
         let respuesta = null
         switch (this.dbType) {
             case 'mariadb':
@@ -39,11 +58,11 @@ class productos {
                 return respuesta
                 break;
             case 'mongodb':
-                respuesta = await ProductosCollection.findOne({ id })
+                respuesta = await ProductosCollection.findOne(data)
                 return respuesta
                 break;
             default:
-
+                if (!this.productos.length) return this.noItems()
                 let filtered = this.productos.filter((producto) => { return producto.id === data.id; });
                 if (filtered.length === 0) return this.itemNotFound()
                 return filtered[0]
@@ -51,10 +70,8 @@ class productos {
         }
 
     }
-
     async addItem(obj) {
         let data = this.validacionEsquema('post', obj)
-        if (!data) return this.error()
         if (!data) return this.error()
         let newProducto = null
         let id = null
@@ -64,8 +81,16 @@ class productos {
                 newProducto = { ...id, ...data }
                 break;
             case 'mongodb':
+<<<<<<< HEAD
                 id = await ProductosCollection.create(data)
                 newProducto = { ...id, ...data }
+=======
+                let cant = await this.getLastId();
+                cant = cant.length?(cant[0].id+1):1
+                data = {...data,id:cant}
+                id = await ProductosCollection.create(data);
+                newProducto = { id:id._id, ...data }
+>>>>>>> test29
                 break;
             default:
                 id = this.productos.length;
@@ -90,7 +115,7 @@ class productos {
                 respuesta = await db.update(data.id, data)
                 break;
             case 'mongodb':
-                let busqueda = {_id:data.id}
+                let busqueda = {id:data.id}
                 let update  = {$set:data}
                 let options  = { upsert: true }
                 respuesta = await ProductosCollection.updateOne(busqueda,update, options)
@@ -116,7 +141,7 @@ class productos {
                 return respuesta
                 break;
             case 'mongodb':
-                respuesta = await ProductosCollection.deleteOne({_id:data.id})
+                respuesta = await ProductosCollection.deleteOne({id:data.id})
                 respuesta = await ProductosCollection.find();
                 return respuesta
                 break;
@@ -129,26 +154,22 @@ class productos {
         }
 
     }
-
     itemNotFound() {
         return {
             error: 'producto no encontrado'
         }
     }
-
     noItems() {
         return {
             'error': 'no hay productos cargados'
         }
     }
-
     isObject(obj) {
         return obj != null && obj.constructor.name === "Object"
     }
     error() {
         return { message: "algo salio mal" }
     }
-
     validacionEsquema(metodo, data) {
         let datoValidado = {}
         let esquema = {

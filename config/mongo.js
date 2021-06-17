@@ -14,8 +14,8 @@ ecommerce.on('error',(error)=>logger.error(`An error: ${error}`))
 
 const ObjectId = mongoose.Types.ObjectId
 const productosSchema = new mongoose.Schema({
-    _id : {type:ObjectId},
-    id : {type:ObjectId},
+   /*  _id : {type:ObjectId}, */
+    id : {type:Number},
     title : {type:String},
     tumbnails : {type:String},
     price : {type:Number},
