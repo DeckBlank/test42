@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon server.es6.js --exec babel-node",
     "testAxios": "nodemon resourcesTest/axiosRequest.js --exec babel-node",
+    "test":"mocha",
     "prod": "babel-node server.es6.js",
     "start": "node server.js",
     "ServerES6toJS5": "babel server.es6.js -o server.js",
