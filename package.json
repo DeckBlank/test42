@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.es6.js --exec babel-node",
+    "dev2": "nodemon persistencia/layersProductos/dbDTO.js --exec babel-node",
     "testAxios": "nodemon resourcesTest/axiosRequest.js --exec babel-node",
     "test":"mocha",
     "prod": "babel-node server.es6.js",
