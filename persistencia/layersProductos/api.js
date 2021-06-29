@@ -1,8 +1,8 @@
 const dbType = process.env.DB_TYPE
-import {productos} from './dbDTO'
+import {productos} from './factory'
 const Productos = new productos(dbType)
 
-class factory {
+class producto {
     constructor() {
         this.productos = []
     }
@@ -13,7 +13,7 @@ class factory {
     }
     async getItems() {
         let respuesta = null
-        respuesta = await Productos.find()
+        respuesta = await Productos.getItems()
         if (!respuesta.length) {
             return this.noItems()
         }
@@ -31,10 +31,10 @@ class factory {
         if (!data) return this.error()
         let newProducto = null
         let id = null
-        let cant = await this.getLastId();
+        let cant = await Productos.getLastId();
                 cant = cant.length?(cant[0].id+1):1
                 data = {...data,id:cant}
-                id = await ProductosCollection.create(data);
+                id = await Productos.addItem(data);
                 newProducto = { id:id._id, ...data }
         return newProducto
     }
@@ -42,14 +42,14 @@ class factory {
         let data = this.validacionEsquema('put', obj)
         if (!data) return this.error()
         let respuesta = null;
-        respuesta = await Productos.updateOne(data);
+        respuesta = await Productos.putItemById(data);
         return data;
     }
     async deleteItemById(id) {
         let data = this.validacionEsquema('delete', { id })
         if (!data) return this.error()
         let respuesta = null
-        respuesta = await Productos.deleteOne(data.id)
+        respuesta = await Productos.deleteItemById(data.id)
         respuesta = await Productos.find();
         return respuesta
     }
@@ -107,4 +107,4 @@ class factory {
     }
 }
 
-export const NewProductos = new factory();
+export const apiProductos = new producto();
