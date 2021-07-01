@@ -4,14 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.es6.js --exec babel-node",
+    "dev": "nodemon server.es6.js --exec babel-node 8080",
     "dev2": "nodemon config/enviroments.js --exec babel-node",
     "testAxios": "nodemon resourcesTest/axiosRequest.js --exec babel-node",
     "test": "mocha",
     "prod": "babel-node server.es6.js",
-    "start": "babel-node server.es6.js ",
+    "start": "babel-node server.es6.js",
     "ServerES6toJS5": "babel server.es6.js -o server.js",
-    "ServerTStoJS5": "tsc server.ts "
+    "ServerTStoJS5": "tsc server.ts"
   },
   "author": "JLGS",
   "license": "ISC",
