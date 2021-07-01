@@ -117,7 +117,7 @@ import { productos,routeChat ,info,randoms} from "./routes";
 app.use("/info", info);
 app.use("/randoms", randoms);
 
-app.use("/api/productos", productos,(req,res,next)=>{ //, sessionMiddleware
+app.use("/api/productos", sessionMiddleware, productos,(req,res,next)=>{ //
   let message = req.message;
   io.sockets.emit('mensaje', message);
 });

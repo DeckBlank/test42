@@ -1,3 +1,4 @@
 node_modules
 fronendreact/node_modules/*
 .facebookCredentials
+.env
