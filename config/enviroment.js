@@ -1,19 +1,18 @@
+const path = require('path');
+const ruta = path.join(process.cwd(), `./enviroments/.env`);
 import { config } from "dotenv";
-config();
+config({path:ruta});
 import minimist from "minimist";
 let args = minimist(process.argv.slice(2),{
     alias:{
-        d :'dedo',
-        p:'port',
-
+        p:'port'
     },
     default:{
         port : '8080'
     }
 })
 
-
-const enviroment = {
+export const enviroment = {
     "PORT" : args.p,
     "PUBLIC" : process.env.PUBLIC,
     "PERMITIDOS" : process.env.PERMITIDOS,
@@ -24,5 +23,3 @@ const enviroment = {
     "clientSecret" : process.env.clientSecret,
     "callbackURL" : process.env.callbackURL,
 }
-console.log(enviroment);
-export default enviroment 

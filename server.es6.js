@@ -1,20 +1,13 @@
-import dotenv from "dotenv";
-dotenv.config();
+import { enviroment } from "./config/enviroment";
 import express from "express";
 import socketIO from 'socket.io'
 import morgan from 'morgan'
-import {startSocket} from './socket' 
+import {socketFlow} from './socket' 
 import cors from 'cors'
 import corsOptions from './config/cors.js'
-import {Usuarios} from './utils/usuarios'
 import cookieParser from 'cookie-parser'
-import session from 'express-session'
-import MongoStore from 'connect-mongo'
-import passport from "passport";
-
-import { Strategy as LocalStrategy } from "passport-local";
-import { Strategy as FacebookStrategy } from "passport-facebook";
-import {facebook,local} from './auth'
+import session from './config/session'
+import {passport} from './auth'
 import http  from 'http'
 import compression from 'compression'
 
@@ -42,26 +35,11 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(morgan('tiny'));
 app.use(cookieParser())
-app.use(session({
-    secret: 'supersecreta',
-    resave: false,
-    saveUninitialized: false,
-    rolling: true,
-    cookie: {
-        maxAge: 600000
-    },
-    store:MongoStore.create({ mongoUrl: process.env.DB_BDG })
-}))
+app.use(session())
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use("login",new LocalStrategy(local.config,local.loginCallback));
-passport.use("register",new LocalStrategy(local.config,local.callback));
 
-passport.use(new FacebookStrategy(facebook.credenciales,facebook.callback));
-
-app.use("/auth/facebook",facebook.route);
-app.use("/auth",local.route);
 
 
 const sessionMiddleware = (req,res,next)=>{
@@ -75,45 +53,21 @@ app.get('/user',sessionMiddleware,(req,res)=>{
   res.json(req.user)
 })
 
-
-io.on('connect', (client) => {
-  client.on('disconnect', function () {
-  });
-  client.on('registrarse',(email)=>{
-    let estado = Usuarios.newUser(email,client.id)
-    if(estado ===true){
-      io.sockets.emit(client.id,{message:'email aceptado'})
-    }else{
-      io.sockets.emit('error',{message:'email ya usado'})
-    }
-    
-  })
-  client.on('chat',async (mensaje)=>{
-    let email = Usuarios.getEmailbyId(client.id)
-    if(email===''){
-      io.sockets.emit('error',{message:'usuario no registrado'})
-    }else{
-      let mensajeChat = {
-        email,
-        fecha:new Date(),
-        mensaje
-      }
-      let guardado = await Usuarios.guardar(mensajeChat,'sqlite')
-      io.sockets.emit('resp-chat',guardado)
-    }
-    
-  })
-})
+const sock = new socketFlow(io);
+io.on('connect', sock.api)
 
 
 
-const PORT = process.env.PORT || 8080;
+const PORT = enviroment.PORT || 8080;
 
 server.listen(PORT, () => {
   logger.info(`Aplicacion en puerto ${PORT}`);
 });
 
-import { productos,routeChat ,info,randoms} from "./routes";
+import { productos,routeChat ,info,randoms,local,facebook } from "./routes";
+
+app.use('/auth',local)
+app.use('/facebook',facebook)
 
 app.use("/info", info);
 app.use("/randoms", randoms);

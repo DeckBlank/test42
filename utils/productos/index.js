@@ -1,6 +1,7 @@
+import {enviroment} from '../../config/enviroment'
 import db from '../../config/optionMariaDB'
 import { ProductosCollection } from '../../config/mongo'
-const dbType = process.env.DB_TYPE
+const dbType = enviroment.DB_TYPE
 
 class productos {
     constructor(type) {

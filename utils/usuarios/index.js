@@ -1,5 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
+import {enviroment} from '../../config/enviroment'
 import {files} from '../files'
 class usuarios extends files{ 
     constructor(archivo){
@@ -44,4 +43,4 @@ class usuarios extends files{
     }
 }
 
-export const Usuarios = new usuarios(process.env.PATH_CHAT)
+export const Usuarios = new usuarios(enviroment.PATH_CHAT)

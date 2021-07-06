@@ -1,4 +1,5 @@
-const dbType = process.env.DB_TYPE
+import {enviroment} from '../../config/enviroment'
+const dbType = enviroment.DB_TYPE
 import {productos} from './factory'
 const Productos = new productos(dbType)
 

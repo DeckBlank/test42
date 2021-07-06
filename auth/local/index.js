@@ -1,25 +1,6 @@
 import passport from "passport";
-import express from 'express'
-export const route = express.Router()
 import { User } from "../../models/user.js";
 import bCrypt from "bcrypt";
-
-route.post(
-    "/login",passport.authenticate("login"), 
-    (req, res) => {
-      res.json(req.user.nombre);
-    }
-  );
-  route.post("/register", 
-  (req, res,next) => {
-    next();
-  },
-  passport.authenticate("register"), 
-    (req, res) => {
-      res.json(req.user.nombre);
-    }
-  );
-
 export const config = {
     usernameField: "nombre",
     passReqToCallback: true,

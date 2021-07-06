@@ -1,8 +1,7 @@
-import dotenv from 'dotenv'
-dotenv.config({path:'.env'})
+import { enviroment } from './enviroment'
 import cors from 'cors'
 
-var whitelist = process.env.PERMITIDOS.split(' ')
+var whitelist = enviroment.PERMITIDOS.split(' ')
 var corsOptions = {
   origin: function (origin, callback) {
         if (whitelist.indexOf(origin) !== -1||typeof origin ==='undefined') {

@@ -1,27 +1,13 @@
-import dotenv from "dotenv";
-dotenv.config();
+import { enviroment } from "../../config/enviroment.js";
 import passport from "passport";
-import express from 'express'
-export const route = express.Router()
 import { User } from "../../models/user.js";
 
 
-route.get("/", (req,res,next)=>{
-    next();
-    },passport.authenticate("facebook"));
-    
-route.get("/callback",
-    passport.authenticate("facebook"), 
-    function (req, res) {
-        res.redirect('/');
-
-    }
-);
 
 export const credenciales = {
-    clientID: process.env.clientID  || process.argv[3],
-    clientSecret: process.env.clientSecret || process.argv[4],
-    callbackURL: process.env.callbackURL,
+    clientID: enviroment.clientID  || process.argv[3],
+    clientSecret: enviroment.clientSecret || process.argv[4],
+    callbackURL: enviroment.callbackURL,
 }
 
 

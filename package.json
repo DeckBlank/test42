@@ -2,10 +2,10 @@
   "name": "doce",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.es6.js",
   "scripts": {
     "dev": "nodemon server.es6.js --exec babel-node 8080",
-    "dev2": "nodemon config/enviroments.js --exec babel-node",
+    "dev2": "nodemon config/enviroment.js --exec babel-node",
     "testAxios": "nodemon resourcesTest/axiosRequest.js --exec babel-node",
     "test": "mocha",
     "prod": "babel-node server.es6.js",
